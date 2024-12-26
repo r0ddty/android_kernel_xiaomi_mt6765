@@ -3,7 +3,6 @@
  * FocalTech TouchScreen driver.
  *
  * Copyright (c) 2010-2017, Focaltech Ltd. All rights reserved.
- * Copyright (C) 2019 XiaoMi, Inc.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -267,8 +266,8 @@ static int fts_debug_write(struct file *filp,
     struct fts_ts_data *ts_data = fts_data;
     struct i2c_client *client = ts_data->client;
 
-    if ((count == 0) || (count > PROC_WRITE_BUF_SIZE)) {
-        FTS_ERROR("apk proc wirte count(%d) fail", (int)count);
+	if ((len == 0) || (len > PROC_WRITE_BUF_SIZE)) {
+		FTS_ERROR("apk proc write count(%d) fail", (int)len);
         return -EINVAL;
     }
 

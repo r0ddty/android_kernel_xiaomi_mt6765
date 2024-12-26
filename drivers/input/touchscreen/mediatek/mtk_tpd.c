@@ -26,13 +26,6 @@
 #include <linux/compat.h>
 #endif
 
-#if defined(CONFIG_MTK_S3320) || defined(CONFIG_MTK_S3320_50) \
-	|| defined(CONFIG_MTK_S3320_47) || defined(CONFIG_MTK_MIT200) \
-	|| defined(CONFIG_TOUCHSCREEN_SYNAPTICS_S3528) \
-	|| defined(CONFIG_MTK_S7020) \
-	|| defined(CONFIG_TOUCHSCREEN_MTK_SYNAPTICS_3320_50)
-#include <linux/input/mt.h>
-#endif /* CONFIG_MTK_S3320 */
 /* for magnify velocity******************************************** */
 #define TOUCH_IOC_MAGIC 'A'
 
@@ -624,13 +617,7 @@ static int tpd_probe(struct platform_device *pdev)
 	set_bit(ABS_X, tpd->dev->absbit);
 	set_bit(ABS_Y, tpd->dev->absbit);
 	set_bit(ABS_PRESSURE, tpd->dev->absbit);
-#if !defined(CONFIG_MTK_S3320) && !defined(CONFIG_MTK_S3320_47)\
-	&& !defined(CONFIG_MTK_S3320_50) && !defined(CONFIG_MTK_MIT200) \
-	&& !defined(CONFIG_TOUCHSCREEN_SYNAPTICS_S3528) \
-	&& !defined(CONFIG_MTK_S7020) \
-	&& !defined(CONFIG_TOUCHSCREEN_MTK_SYNAPTICS_3320_50)
 	set_bit(BTN_TOUCH, tpd->dev->keybit);
-#endif /* CONFIG_MTK_S3320 */
 	set_bit(INPUT_PROP_DIRECT, tpd->dev->propbit);
 
 	/* save dev for regulator_get() before tpd_local_init() */
@@ -678,23 +665,10 @@ static int tpd_probe(struct platform_device *pdev)
 			ABS_MT_POSITION_X, 0, TPD_RES_X, 0, 0);
 		input_set_abs_params(tpd->dev,
 			ABS_MT_POSITION_Y, 0, TPD_RES_Y, 0, 0);
-#if defined(CONFIG_MTK_S3320) || defined(CONFIG_MTK_S3320_47) \
-	|| defined(CONFIG_MTK_S3320_50) || defined(CONFIG_MTK_MIT200) \
-	|| defined(CONFIG_TOUCHSCREEN_SYNAPTICS_S3528) \
-	|| defined(CONFIG_MTK_S7020) \
-	|| defined(CONFIG_TOUCHSCREEN_MTK_SYNAPTICS_3320_50)
-		input_set_abs_params(tpd->dev,
-		ABS_MT_PRESSURE, 0, 255, 0, 0);
-		input_set_abs_params(tpd->dev,
-			ABS_MT_WIDTH_MAJOR, 0, 15, 0, 0);
-		input_set_abs_params(tpd->dev, ABS_MT_WIDTH_MINOR, 0, 15, 0, 0);
-		input_mt_init_slots(tpd->dev, 10, 0);
-#else
 		input_set_abs_params(tpd->dev,
 			ABS_MT_TOUCH_MAJOR, 0, 100, 0, 0);
 		input_set_abs_params(tpd->dev,
 			ABS_MT_TOUCH_MINOR, 0, 100, 0, 0);
-#endif /* CONFIG_MTK_S3320 */
 		TPD_DMESG("Cap touch panel driver\n");
 	}
 	input_set_abs_params(tpd->dev, ABS_X, 0, TPD_RES_X, 0, 0);

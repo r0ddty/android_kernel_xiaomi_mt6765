@@ -137,6 +137,7 @@ struct fts_upgrade {
 
 struct upgrade_fw {
     u16 vendor_id;
+    u8 maker_id;
     u8 *fw_file;
     u32 fw_len;
 };
