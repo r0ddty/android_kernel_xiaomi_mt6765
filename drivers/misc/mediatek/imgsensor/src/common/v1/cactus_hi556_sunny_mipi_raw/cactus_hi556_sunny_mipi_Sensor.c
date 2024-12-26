@@ -466,54 +466,49 @@ static void set_max_framerate(UINT16 framerate,kal_bool min_framelength_en)
 	set_dummy();
 }	/*	set_max_framerate  */
 
-static void write_shutter(kal_uint32 shutter)
-{
-	kal_uint16 realtime_fps = 0;
+static void write_shutter(kal_uint16 shutter) {
+	kal_uint16 realtime_fps;
 
 	spin_lock(&imgsensor_drv_lock);
-
-	if (shutter > imgsensor.min_frame_length - imgsensor_info.margin)
+	if (shutter > imgsensor.min_frame_length - imgsensor_info.margin) {
 		imgsensor.frame_length = shutter + imgsensor_info.margin;
-	else
+	} else {
 		imgsensor.frame_length = imgsensor.min_frame_length;
-	if (imgsensor.frame_length > imgsensor_info.max_frame_length)
+	}
+	if (imgsensor.frame_length > imgsensor_info.max_frame_length) {
 		imgsensor.frame_length = imgsensor_info.max_frame_length;
+	}
 	spin_unlock(&imgsensor_drv_lock);
 
-	shutter = (shutter < imgsensor_info.min_shutter) ?
-		imgsensor_info.min_shutter : shutter;
-	shutter = (shutter >
-		(imgsensor_info.max_frame_length - imgsensor_info.margin)) ?
-		(imgsensor_info.max_frame_length - imgsensor_info.margin) :
-		shutter;
+	shutter = (shutter < imgsensor_info.min_shutter) ? imgsensor_info.min_shutter : shutter;
+	shutter = (shutter > (imgsensor_info.max_frame_length - imgsensor_info.margin)) ? (imgsensor_info.max_frame_length - imgsensor_info.margin) : shutter;
+
 	if (imgsensor.autoflicker_en) {
-		realtime_fps = imgsensor.pclk * 10 /
-			(imgsensor.line_length * imgsensor.frame_length);
-		if (realtime_fps >= 297 && realtime_fps <= 305)
+		realtime_fps = imgsensor.pclk * 10 / (imgsensor.line_length * imgsensor.frame_length);
+
+		if (realtime_fps >= 297 && realtime_fps <= 305) {
 			set_max_framerate(296, 0);
-		else if (realtime_fps >= 147 && realtime_fps <= 150)
+		} else if (realtime_fps >= 147 && realtime_fps <= 150) {
 			set_max_framerate(146, 0);
-		else
+		} else {
 			write_cmos_sensor(0x0006, imgsensor.frame_length);
-
-	} else{
-		// Extend frame length
-
-		// ADD ODIN
-		realtime_fps = imgsensor.pclk * 10 /
-			(imgsensor.line_length * imgsensor.frame_length);
-		if (realtime_fps > 300 && realtime_fps < 320)
+		}
+	} else {
+		// extend frame length
+		realtime_fps = imgsensor.pclk * 10 / (imgsensor.line_length * imgsensor.frame_length);
+		if (realtime_fps > 300 && realtime_fps < 320) {
 			set_max_framerate(300, 0);
-		// ADD END
-			write_cmos_sensor(0x0006, imgsensor.frame_length);
+		}
+
+		write_cmos_sensor(0x0006, imgsensor.frame_length);
 	}
 
-	// Update Shutter
-	write_cmos_sensor_8(0x0073, ((shutter & 0xFF0000) >> 16));
+	// update shutter
+	write_cmos_sensor_8(0x0073, (shutter & 0xFF0000) >> 16);
 	write_cmos_sensor(0x0074, shutter & 0x00FFFF);
-	LOG_DBG("shutter =%d, framelength =%d",
-		shutter, imgsensor.frame_length);
-}	/*	write_shutter  */
+
+	LOG_DBG("shutter: %d, framelength: %d\n", shutter, imgsensor.frame_length);
+}
 
 /*************************************************************************
  * FUNCTION
