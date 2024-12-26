@@ -43,7 +43,6 @@
 #endif
 //#include <linux/wakelock.h>
 #include "focaltech_core.h"
-#include "./focaltech_test/focaltech_test.h"
 #include <linux/hardware_info.h>  
 
 /*****************************************************************************
@@ -1125,11 +1124,7 @@ static int tpd_probe(struct i2c_client *client, const struct i2c_device_id *id)
 
     tpd_load_status = 1;
     FTS_DEBUG("TPD_RES_Y:%d", (int)TPD_RES_Y);
-    hardwareinfo_tp_register(hardwareinfo_set, &fts_data);
-#if FTS_LOCK_DOWN_INFO
-	fts_lockdown_init(client,fts_data);
-#endif
-	FTS_FUNC_EXIT();
+    FTS_FUNC_EXIT();
     return 0;
 
 err_irq_req:
